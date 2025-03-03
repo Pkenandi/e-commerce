@@ -1,13 +1,17 @@
 package com.ecom.ecommerce.order;
 
 import com.ecom.ecommerce.customer.CustomerClient;
+import com.ecom.ecommerce.customer.CustomerResponse;
 import com.ecom.ecommerce.exceptions.BusinessException;
 import com.ecom.ecommerce.kafka.OrderConfirmation;
 import com.ecom.ecommerce.kafka.OrderProducer;
 import com.ecom.ecommerce.orderline.OrderLineRequest;
 import com.ecom.ecommerce.orderline.OrderLineService;
+import com.ecom.ecommerce.payment.PaymentClient;
+import com.ecom.ecommerce.payment.PaymentRequest;
 import com.ecom.ecommerce.product.ProductClient;
 import com.ecom.ecommerce.product.PurchaseRequest;
+import com.ecom.ecommerce.product.PurchaseResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,7 @@ public class OrderService {
     private final ProductClient productClient;
     private final OrderLineService orderLineService;
     private final OrderProducer orderProducer;
+    private final PaymentClient paymentClient;
 
     public Integer createOrder(@Valid OrderRequest request) {
         // Check the customer with (Feign)
@@ -36,32 +41,12 @@ public class OrderService {
                         + request.customerId()));
         // purchase the products --> product-ms (RestTemplate)
         var purchasedProducts = this.productClient.purchaseProducts(request.products());
-
-        // persist order
-        var order = this.repository.save(mapper.toOrder(request));
-        // persist order lines
-        for (PurchaseRequest purchaseRequest: request.products()) {
-            orderLineService.saveOrderLine(
-                    new OrderLineRequest(
-                            null,
-                            order.getId(),
-                            purchaseRequest.productId(),
-                            purchaseRequest.quantity()
-                    )
-            );
-        }
-        // todo start payment process
-
+        // persist order & orderLine
+        var order = persistOrder(request);
+        // start payment process
+        proceedToPayment(request, customer);
         // send the order confirmation email --> notification-ms (kafka)
-        orderProducer.sendOrderConfirmation(
-                new OrderConfirmation(
-                        request.reference(),
-                        request.amount(),
-                        request.paymentMethod(),
-                        customer,
-                        purchasedProducts
-                )
-        );
+        sendOrderConfirmation(request, customer, purchasedProducts);
 
         return order.getId();
     }
@@ -80,5 +65,44 @@ public class OrderService {
                         () -> new EntityNotFoundException(format(" An Order was not found with the provided Order ID %s"
                         , orderId))
                 );
+    }
+
+    private void sendOrderConfirmation(OrderRequest request, CustomerResponse customer, List<PurchaseResponse> purchasedProducts) {
+        orderProducer.sendOrderConfirmation(
+                new OrderConfirmation(
+                        request.reference(),
+                        request.amount(),
+                        request.paymentMethod(),
+                        customer,
+                        purchasedProducts
+                )
+        );
+    }
+
+    private void proceedToPayment(OrderRequest request, CustomerResponse customer) {
+        var paymentRequest = new PaymentRequest(
+                request.amount(),
+                request.paymentMethod(),
+                request.id(),
+                request.reference(),
+                customer
+        );
+        paymentClient.requestOrderPayment(paymentRequest);
+    }
+
+    private Order persistOrder(OrderRequest request) {
+        var order = this.repository.save(mapper.toOrder(request));
+        // persist order lines
+        for (PurchaseRequest purchaseRequest: request.products()) {
+            orderLineService.saveOrderLine(
+                    new OrderLineRequest(
+                            null,
+                            order.getId(),
+                            purchaseRequest.productId(),
+                            purchaseRequest.quantity()
+                    )
+            );
+        }
+        return order;
     }
 }
