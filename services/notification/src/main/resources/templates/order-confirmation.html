@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        .details {
+            margin: 20px 0;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .products {
+            margin: 20px 0;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .products th, .products td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .products th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <h2>Order Confirmation</h2>
+    <p>Dear <strong>{{customerFirstname}} {{customerLastname}}</strong>,</p>
+    <p>Thank you for your order. We are pleased to confirm your purchase.</p>
+    <div class="details">
+        <p><strong>Order Reference:</strong> {{orderReference}}</p>
+        <p><strong>Amount:</strong> ${{amount}}</p>
+        <p><strong>Email:</strong> {{customerEmail}}</p>
+    </div>
+    <h3>Order Details:</h3>
+    <table class="products">
+        <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each products}}
+        <tr>
+            <td>{{productId}}</td>
+            <td>{{name}}</td>
+            <td>{{description}}</td>
+            <td>${{price}}</td>
+            <td>{{quantity}}</td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+    <p>Your order is now being processed. You will receive a notification when it is shipped.</p>
+    <p class="footer">Best regards,<br>Your Company Name</p>
+</div>
+</body>
+</html>
