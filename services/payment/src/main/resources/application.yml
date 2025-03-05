@@ -3,6 +3,25 @@ spring:
     name: payment-service
   config:
     import: optional:configserver:http//localhost:8888
+  datasource:
+    url: jdbc:postgresql://localhost:5432/payment
+    username: ecom
+    password: 781227
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    generate-dll: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 kafka:
   topic:
     payment: payment-topic
+
+server:
+  port: 8060

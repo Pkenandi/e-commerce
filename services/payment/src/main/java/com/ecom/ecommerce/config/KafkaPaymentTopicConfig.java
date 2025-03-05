@@ -11,13 +11,10 @@ import org.springframework.kafka.config.TopicBuilder;
 @RequiredArgsConstructor
 public class KafkaPaymentTopicConfig {
 
-    @Value("${kafka.topic.payment}")
-    private final String paymentTopic;
-
     @Bean
     public NewTopic PaymentTopic() {
         return TopicBuilder
-                .name(paymentTopic)
+                .name("payment-topic")
                 .build();
     }
 }

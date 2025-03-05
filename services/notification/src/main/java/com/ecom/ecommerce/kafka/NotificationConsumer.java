@@ -23,14 +23,10 @@ public class NotificationConsumer {
 
     private final NotificationRepository repository;
     private final EmailService emailService;
-    @Value("${kafka.topic.payment}")
-    private final String paymentTopic;
-    @Value("${kafka.topic.order}")
-    private final String orderTopic;
 
     @KafkaListener(topics = "payment-topic")
     public void consumePaymentSuccessNotification(PaymentConfirmation paymentConfirmation) {
-        logMessage(paymentTopic, paymentConfirmation);
+        logMessage("payment-topic", paymentConfirmation);
         repository.save(
                 Notification.builder()
                         .notificationType(PAYMENT_CONFIRMATION)
@@ -47,7 +43,7 @@ public class NotificationConsumer {
 
     @KafkaListener(topics = "order-topic")
     public void consumeOrderConfirmationNotification(OrderConfirmation orderConfirmation) {
-        logMessage(orderTopic, orderConfirmation);
+        logMessage("order-topic", orderConfirmation);
         repository.save(
                 Notification.builder()
                         .notificationType(ORDER_CONFIRMATION)

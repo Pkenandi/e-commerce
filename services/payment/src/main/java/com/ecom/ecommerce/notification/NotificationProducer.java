@@ -16,14 +16,12 @@ import static org.springframework.kafka.support.KafkaHeaders.TOPIC;
 public class NotificationProducer {
 
     private final KafkaTemplate<String, PaymentNotificationRequest> template;
-    @Value("${kafka.topic.payment}")
-    private final String paymentTopic;
 
     public void sendNotification(PaymentNotificationRequest request) {
         log.info(" Sending notification with body <{}> ", request);
         Message<PaymentNotificationRequest> message = MessageBuilder
                 .withPayload(request)
-                .setHeader(TOPIC, paymentTopic)
+                .setHeader(TOPIC, "payment-topic")
                 .build();
         template.send(message);
     }

@@ -46,9 +46,9 @@ public class EmailService {
             messageHelper.setTo(to);
             mailSender.send(mimeMailMessage);
 
-            log.info("✅ Email successfully sent to {} with template {}", to, templateName);
+            log.info("Email successfully sent to {} with template {}", to, templateName);
         } catch (MessagingException e) {
-            log.warn("⚠️ WARNING - Cannot send email to {} due to error: {}", to, e.getMessage());
+            log.warn("WARNING - Cannot send email to {} due to error: {}", to, e.getMessage());
         }
     }
 
