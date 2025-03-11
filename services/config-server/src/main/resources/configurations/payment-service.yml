@@ -6,16 +6,15 @@ spring:
     driverClassName: org.postgresql.Driver
 
   jpa:
-    generate-dll: true
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
+      generate-dll: true
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      properties:
         hibernate:
           format_sql: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-
+      database: postgresql
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     producer:
       bootstrap-servers: localhost:9092
@@ -23,6 +22,9 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.type.mapping: paymentConfirmation:com.ecom.ecommerce.notification.PaymentNotificationRequest
+kafka:
+  topic:
+    payment: payment-topic
 
 server:
   port: 8060

@@ -4,7 +4,7 @@ spring:
       username: root
       password: password
       host: localhost
-      port: 27027
+      port: 27017
       database: notification
       authentication-database: admin
   kafka:
@@ -32,6 +32,11 @@ spring:
         connectiontimeout: 5000
         timeout: 3000
         writetimeout: 5000
+
+kafka:
+  topic:
+    payment: payment-topic
+    order: order-topic
 
 server:
   port: 8040

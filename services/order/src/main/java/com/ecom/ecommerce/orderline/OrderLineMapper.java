@@ -15,7 +15,6 @@ public class OrderLineMapper {
                                 .id(request.orderId())
                                 .build()
                 )
-
                 .productId(request.productId())
                 .build();
     }

@@ -1,33 +1,5 @@
 spring:
   config:
-    import: optional:configserver:http//localhost:8888
-  datasource:
-    url: jdbc:postgresql://localhost:5432/order
-    username: ecom
-    password: 781227
-    driverClassName: org.postgresql.Driver
-
-  jpa:
-    generate-dll: true
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    import: optional:configserver:http://localhost:8888
   application:
     name: order-service
-
-application:
-  config:
-    customer-url: http://localhost:8222/api/v1/customers
-    product-url: http://localhost:8222/api/v1/products
-    payment-url: http://localhost:8222/api/v1/payments
-
-kafka:
-  topic:
-    order: order-topic
-server:
-  port: 8070

@@ -66,25 +66,26 @@ services:
     networks:
       - microservices-net
 
-#  mongo-express:
-#    container_name: ms_mongo_express
-#    image: mongo-express:latest
-#    restart: always
-#    depends_on:
-#      - mongo
-#    #entrypoint: [sh, -c, "sleep 10s && tini -- /docker-entrypoint.sh mongo-express"]
-#    ports:
-#      - "8081:8081"
-#    networks:
-#      - microservices-net
-#    environment:
-#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-#      ME_CONFIG_MONGODB_ADMINPASSWORD: password
-#      ME_CONFIG_MONGODB_URL: mongodb://root:password@mongo:27017/
-#      #ME_CONFIG_MONGODB_SERVER: ms_mongo_db
-#      #ME_CONFIG_MONGODB_PORT: 27017
-#      ME_CONFIG_BASICAUTH_USERNAME: admin
-#      ME_CONFIG_BASICAUTH_PASSWORD: admin
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - microservices-net
+
+  keycloak:
+    container_name: keycloak-ms
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - "9098:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    networks:
+      - microservices-net
+    command:
+      - "start-dev"
 
   mail-dev:
     container_name: ms_mail_dev
